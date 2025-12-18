@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: bpa_api_app
+    volumes:
+      - ./:/var/www
+    working_dir: /var/www
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+
+  web:
+    image: nginx:alpine
+    container_name: bpa_sft_nginx
+    ports:
+      - '8080:80'
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  mariadb:
+    image: mariadb:10.6
+    container_name: bpa_sft_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bpa_sft
+      MYSQL_USER: bpa
+      MYSQL_PASSWORD: secret
+    ports:
+      - '3307:3306'
+    volumes:
+      - bpa_sft_dbdata:/var/lib/mysql
+
+volumes:
+  bpa_sft_dbdata:
