@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Middleware;
 
 use App\Database\Connection;
@@ -19,7 +20,7 @@ class AuthMiddleware
 
         if (!$auth) {
             http_response_code(401);
-            exit(json_encode(['message' => 'NO AUTH HEADER']));
+            exit(json_encode(['message' => 'Unauthorzation']));
         }
 
         // Bersihkan token

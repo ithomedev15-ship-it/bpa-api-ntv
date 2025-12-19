@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Helpers\UrlKey;
 use App\Helpers\Response;
 
 class DebugController

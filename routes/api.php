@@ -5,9 +5,13 @@ use App\Middleware\AuthMiddleware;
 use App\Controllers\AuthController;
 use App\Controllers\UserController;
 use App\Controllers\DebugController;
+use App\Middleware\ApiKeyMiddleware;
 use App\Middleware\UrlKeyMiddleware;
+use App\Controllers\ApiKeyController;
 use App\Controllers\HrdKaryawanController;
 use App\Controllers\MasterProgressController;
+use App\Controllers\ApiKeyController as ControllersApiKeyController;
+use App\Controllers\ApiKeyController as AppControllersApiKeyController;
 
 $router = new Router();
 
@@ -45,22 +49,35 @@ $router->post('/master-progress', [
     AuthMiddleware::class
 ]);
 
-// $router->get('/hrd-karyawan', [HrdKaryawanController::class, 'index'],
-//     [AuthMiddleware::class
-// ]);
-
-// $router->get('/master-karyawan/{key}', [
-//     HrdKaryawanController::class,
-//     'index'
-// ], [
-//     AuthMiddleware::class,
-//     UrlKeyMiddleware::class
-// ]);
+// -----------------------------
 
 $router->post('/debug/generate-url-key', [
     DebugController::class,
     'generateUrlKey'
 ]);
+
+
+// $router->get('/api/{client}/hrd-karyawan', [
+//     HrdKaryawanController::class,
+//     'index'
+// ], [
+//     ClientMiddleware::class,
+//     ApiKeyMiddleware::class,
+//     AuthMiddleware::class,
+// ]);
+
+
+$router->post('/generate-api-key', [
+    ApiKeyController::class,
+    'generate'
+]);
+
+$router->get('/hrd-karyawan', [HrdKaryawanController::class,'index'], [
+    ApiKeyMiddleware::class,
+    AuthMiddleware::class
+]);
+
+
 
 
 
