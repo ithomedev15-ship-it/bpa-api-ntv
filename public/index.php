@@ -28,10 +28,6 @@ if (strpos($uri, $basePath) === 0) {
 $uri = $uri ?: '/';
 
 
-// var_dump(getenv('DB_DSN'), getenv('DB_USER'));
-// exit;
-
-
 // DISPATCH
 $router->dispatch($_SERVER['REQUEST_METHOD'], $uri);
 

@@ -48,17 +48,37 @@ class UserRepository implements UserRepositoryInterface
 
     public function findByUsername(string $username): ?array
     {
-        $sql = "
-            SELECT *
+        $stmt = $this->db->prepare("
+            SELECT
+                KODE_USER,
+                USERNAME,
+                PASSWORD,
+                KODE_ROLE,
+                FLAG_LEVEL,
+                FLAG_STATUS,
+                GLOBAL_KEY
             FROM SFT_MASTER_USER
             WHERE USERNAME = :username
-              AND FLAG_STATUS = '1'
             LIMIT 1
-        ";
+        ");
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['username' => $username]);
+        $stmt->execute([
+            'username' => $username
+        ]);
 
-        return $stmt->fetch() ?: null;
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Tidak ditemukan
+        if (!$user) {
+            return null;
+        }
+
+        // Tidak aktif
+        if ((string)$user['FLAG_STATUS'] !== '1') {
+            return null;
+        }
+
+        return $user;
     }
+
 }

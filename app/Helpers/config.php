@@ -5,11 +5,11 @@ if (!function_exists('config')) {
     {
         static $configs = [];
 
-        // contoh: security.url_key_secret
         [$file, $item] = explode('.', $key, 2);
 
         if (!isset($configs[$file])) {
-            $path = dirname(__DIR__, 2) . "/config/{$file}.php";
+            // ✅ SESUAI STRUKTUR app/config
+            $path = dirname(__DIR__) . "/config/{$file}.php";
 
             if (!file_exists($path)) {
                 return $default;
