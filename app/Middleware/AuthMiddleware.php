@@ -63,9 +63,7 @@ class AuthMiddleware
         }
 
         // ✅ SET AUTH CONTEXT (INI YANG PENTING)
-        $_SERVER['AUTH_USER'] = [
-            'kode_user' => $token['KODE_USER'],
-            'username'  => $token['USERNAME'], // ← dari token.name
-        ];
+        $_SERVER['AUTH_USER']      = (string) $token['USERNAME'];
+        $_SERVER['AUTH_USER_CODE'] = (string) $token['KODE_USER'];
     }
 }

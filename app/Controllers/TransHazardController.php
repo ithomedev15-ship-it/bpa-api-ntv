@@ -60,22 +60,22 @@ class TransHazardController
     }
 
 
-    public function update(string $kodeHaz): void
+    public function update(): void
     {
         try {
             $payload = $_POST;
 
-            if (empty($payload)) {
-                parse_str(file_get_contents('php://input'), $payload);
+            if (empty($payload['kode_haz'])) {
+                throw new \Exception('Kode hazard wajib');
             }
 
-            // ❌ jangan ambil user dari payload
-            unset($payload['user']);
-
-            $this->service->updateHazard($kodeHaz, $payload);
+            $this->service->updateHazard(
+                $payload['kode_haz'],
+                $payload
+            );
 
             Response::success([
-                'message' => 'Hazard berhasil diperbarui'
+                'message' => 'Hazard berhasil diupdate'
             ]);
         } catch (\Throwable $e) {
             Response::error($e->getMessage(), 400);

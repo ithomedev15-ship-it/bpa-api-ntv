@@ -12,8 +12,10 @@ use App\Controllers\HrdKaryawanController;
 use App\Controllers\MasterHazKategoriController;
 use App\Controllers\TransHazardController;
 use App\Controllers\MasterProgressController;
+use App\Controllers\TransSafetyTalkController;
 use App\Middleware\ModulMiddleware;
 use App\Middleware\UrlSignatureMiddleware;
+use App\Repositories\TransSafetyTalkRepository;
 
 $router = new Router();
 
@@ -88,12 +90,41 @@ $router->post('/trans-hazard', [
     AuthMiddleware::class,
 ]);
 
-$router->put('trans-hazard/{kode_haz}', [
+$router->post('trans-hazard/update', [
     TransHazardController::class,
     'update'
 ], [
     AuthMiddleware::class,
 ]);
+//----------------------------
+$router->get('/safety-talk', [
+    TransSafetyTalkController::class,
+    'index'
+], [
+    AuthMiddleware::class
+]);
+
+$router->post('/safety-talk', [
+    TransSafetyTalkController::class,
+    'store'
+], [
+    AuthMiddleware::class
+]);
+
+$router->post('/safety-talk/update', [
+    TransSafetyTalkController::class,
+    'update'
+], [
+    AuthMiddleware::class
+]);
+
+$router->post('/safety-talk/delete', [
+    TransSafetyTalkController::class,
+    'delete'
+], [
+    AuthMiddleware::class
+]);
+
 
 
 // ==================================--======================================
