@@ -19,7 +19,7 @@ $router = require_once __DIR__ . '/../routes/api.php';
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // NORMALISASI BASE PATH
-$basePath = '/bpa_api_dede/public';
+$basePath = '/bpa_api/public';
 
 if (strpos($uri, $basePath) === 0) {
     $uri = substr($uri, strlen($basePath));
