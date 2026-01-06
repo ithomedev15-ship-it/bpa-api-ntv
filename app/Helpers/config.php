@@ -5,10 +5,18 @@ if (!function_exists('config')) {
     {
         static $configs = [];
 
-        [$file, $item] = explode('.', $key, 2);
+        // 🔒 Aman: split max 2
+        $segments = explode('.', $key, 2);
 
+        $file = $segments[0] ?? null;
+        $item = $segments[1] ?? null;
+
+        if (!$file) {
+            return $default;
+        }
+
+        // ✅ SESUAI STRUKTUR app/config
         if (!isset($configs[$file])) {
-            // ✅ SESUAI STRUKTUR app/config
             $path = dirname(__DIR__) . "/config/{$file}.php";
 
             if (!file_exists($path)) {
@@ -18,6 +26,12 @@ if (!function_exists('config')) {
             $configs[$file] = require $path;
         }
 
+        // ✅ JIKA hanya config('menu')
+        if ($item === null) {
+            return $configs[$file];
+        }
+
+        // ✅ JIKA config('database.mysql')
         return $configs[$file][$item] ?? $default;
     }
 }

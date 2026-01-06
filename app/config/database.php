@@ -7,6 +7,12 @@ return [
         'pass' => '809130IT',
     ],
 
+    'auth' => [
+        'dsn'  => 'mysql:host=127.0.0.1;port=3307;dbname=AUTH_BPA_SFT;charset=utf8mb4',
+        'user' => 'DEV',
+        'pass' => '809130IT',
+    ],
+
     'hrd' => [
         'dsn'  => 'mysql:host=database.gps.network;port=3306;dbname=APP_BPA_HRD;charset=utf8mb4',
         'user' => 'APIGPS',

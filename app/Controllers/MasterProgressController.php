@@ -2,13 +2,16 @@
 
 namespace App\Controllers;
 
-use App\Services\MasterProgressService;
 use App\Helpers\Response;
+use App\Helpers\ModulGuard;
+use App\Services\MasterProgressService;
 
 class MasterProgressController
 {
     public function index(): void
     {
+        ModulGuard::check('MASTER_PROGRESS', 'READ');
+        
         $filters = [
             'status' => $_GET['status'] ?? null,
             'tipe'   => $_GET['tipe'] ?? null,

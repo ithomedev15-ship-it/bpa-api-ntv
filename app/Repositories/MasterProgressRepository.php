@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
+use PDO;
 use App\Database\Connection;
 use App\Interfaces\MasterProgressRepositoryInterface;
-use PDO;
 
 class MasterProgressRepository implements MasterProgressRepositoryInterface
 {

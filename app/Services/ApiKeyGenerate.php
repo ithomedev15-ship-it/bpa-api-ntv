@@ -2,23 +2,29 @@
 
 namespace App\Services;
 
-use InvalidArgumentException;
+use App\Helpers\ApiKeyGenerator;
+use App\Interfaces\ApiKeyRepositoryInterface;
+use Exception;
 
-class ApiKeyGenerate
+class ApiKeyService
 {
-    const APP_SECRET = 'APPBPASAFETY';
+    private ApiKeyRepositoryInterface $repo;
 
-    public static function generateUserMd5(string $username): string
+    public function __construct(ApiKeyRepositoryInterface $repo)
     {
-        $username = trim($username);
+        $this->repo = $repo;
+    }
 
-        if ($username === '') {
-            throw new InvalidArgumentException('Username tidak boleh kosong');
+    public function verify(string $username, string $timestamp, string $clientKey): void
+    {
+        $serverKey = ApiKeyGenerator::generate($username, $timestamp);
+
+        if (!hash_equals($serverKey, $clientKey)) {
+            throw new Exception('API Key tidak valid');
         }
 
-        $baseHash  = md5(self::APP_SECRET);
-        $finalHash = md5($baseHash . $username);
-
-        return $finalHash;
+        if (!$this->repo->isActiveKey($username, $clientKey)) {
+            throw new Exception('API Key tidak terdaftar atau nonaktif');
+        }
     }
 }

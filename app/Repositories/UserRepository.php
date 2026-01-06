@@ -12,7 +12,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function __construct()
     {
-        $this->db = Connection::get('bpa');
+        $this->db = Connection::get('auth');
     }
 
     public function all(): array
@@ -53,7 +53,6 @@ class UserRepository implements UserRepositoryInterface
                 KODE_USER,
                 USERNAME,
                 PASSWORD,
-                KODE_ROLE,
                 FLAG_LEVEL,
                 FLAG_STATUS,
                 GLOBAL_KEY

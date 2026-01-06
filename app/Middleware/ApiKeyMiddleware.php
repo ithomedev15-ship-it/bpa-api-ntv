@@ -2,35 +2,37 @@
 
 namespace App\Middleware;
 
+use Exception;
+use App\Helpers\Response;
 use App\Services\ApiKeyService;
+use App\Repositories\ApiKeyRepository;
 
 class ApiKeyMiddleware
 {
     public function handle(): void
     {
-        $apiKey = $_SERVER['HTTP_X_API_KEY'] ?? '';
+        $username  = $_SERVER['HTTP_X_USERNAME'] ?? '';
+        $timestamp = $_SERVER['HTTP_X_TIMESTAMP'] ?? '';
+        $apiKey    = $_SERVER['HTTP_X_API_KEY'] ?? '';
 
-        if ($apiKey === '') {
-            http_response_code(401);
-            echo json_encode([
-                'success' => false,
-                'message' => 'API Key wajib dikirim'
-            ]);
-            exit;
+        if (!$username || !$timestamp || !$apiKey) {
+            Response::error(
+                'Header API Key tidak lengkap',
+                401
+            );
         }
 
-        // Buat service langsung (tanpa DI)
-        $service = new ApiKeyService();
+        $service = new ApiKeyService(
+            new ApiKeyRepository()
+        );
 
-        if (!$service->validate($apiKey)) {
-            http_response_code(401);
-            echo json_encode([
-                'success' => false,
-                'message' => 'API Key tidak valid atau non aktif'
-            ]);
-            exit;
+        try {
+            $service->verify($username, $timestamp, $apiKey);
+        } catch (Exception $e) {
+            Response::error(
+                $e->getMessage(),
+                401
+            );
         }
-
-        // kalau valid → lanjut request
     }
 }

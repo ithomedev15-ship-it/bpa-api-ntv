@@ -3,12 +3,13 @@
 namespace App\Middleware;
 
 use App\Database\Connection;
+use PDO;
 
 class AuthMiddleware
 {
-    public function handle()
+    public function handle(): void
     {
-        // 🔥 AMBIL HEADER DENGAN CARA AMAN
+        // 🔥 Ambil Authorization header
         $headers = function_exists('getallheaders')
             ? getallheaders()
             : [];
@@ -20,23 +21,51 @@ class AuthMiddleware
 
         if (!$auth) {
             http_response_code(401);
-            exit(json_encode(['message' => 'Unauthorzation']));
+            exit(json_encode([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ]));
         }
 
-        // Bersihkan token
-        $plainToken = trim(str_replace('Bearer', '', $auth));
+        // 🔹 Bearer token
+        $plainToken  = trim(str_replace('Bearer', '', $auth));
         $hashedToken = hash('sha256', $plainToken);
 
-        $db = Connection::get('bpa');
+        $db = Connection::get('auth');
 
-        $stmt = $db->prepare(
-            "SELECT id FROM personal_access_tokens WHERE token = :token"
-        );
-        $stmt->execute(['token' => $hashedToken]);
+        /**
+         * 🔥 Ambil DATA TOKEN
+         * - tokenable_id = KODE_USER
+         * - name         = USERNAME (dipakai untuk LOG_EDIT_NAME)
+         */
+        $stmt = $db->prepare("
+            SELECT
+                tokenable_id AS KODE_USER,
+                name          AS USERNAME
+            FROM personal_access_tokens
+            WHERE token = :token
+              AND tokenable_type = 'USER'
+            LIMIT 1
+        ");
 
-        if (!$stmt->fetch()) {
+        $stmt->execute([
+            'token' => $hashedToken
+        ]);
+
+        $token = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$token) {
             http_response_code(401);
-            exit(json_encode(['message' => 'Token invalid']));
+            exit(json_encode([
+                'success' => false,
+                'message' => 'Token invalid'
+            ]));
         }
+
+        // ✅ SET AUTH CONTEXT (INI YANG PENTING)
+        $_SERVER['AUTH_USER'] = [
+            'kode_user' => $token['KODE_USER'],
+            'username'  => $token['USERNAME'], // ← dari token.name
+        ];
     }
 }

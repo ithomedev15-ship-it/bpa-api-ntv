@@ -12,7 +12,6 @@ class HrdKaryawanRepository implements HrdKaryawanRepositoryInterface
 
     public function __construct()
     {
-        // pakai DB HRD (external)
         $this->db = Connection::get('hrd');
     }
 
