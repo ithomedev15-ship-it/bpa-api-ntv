@@ -7,6 +7,8 @@ use App\Helpers\Response;
 use App\Services\ApiKeyService;
 use App\Repositories\ApiKeyRepository;
 
+// Digunakan untuk kombinasi login
+
 class ApiKeyMiddleware
 {
     public function handle(): void
